@@ -140,16 +140,16 @@ kubectl apply -f sample_cr.yaml
 Observe Terminal 1. The reconciler detects $\Delta = +3$ and provisions 3 pods automatically:
 
 ```text
-[RECONCILE LOOP] Resource: echo-cluster | Desired: 3 | Observed: 0 | Drift: 3
+[RECONCILE LOOP] Resource: echo-service | Desired: 3 | Observed: 0 | Drift: 3
 Scale-Up Event: Provisioning 3 pod(s) to resolve drift...
-EQUILIBRIUM REACHED: System state matches target spec for 'echo-cluster'.
+EQUILIBRIUM REACHED: System state matches target spec for 'echo-service'.
 
 ```
 
 Verify pod creation in Terminal 2:
 
 ```bash
-kubectl get pods -l app.kubernetes.io/managed-by=echo-cluster
+kubectl get pods -l app.kubernetes.io/managed-by=echo-service
 
 ```
 
@@ -158,7 +158,7 @@ kubectl get pods -l app.kubernetes.io/managed-by=echo-cluster
 Simulate an unannounced process crash under the **Crash-Stop Failure Model** by forcibly deleting a running pod:
 
 ```bash
-kubectl delete pod $(kubectl get pods -l app.kubernetes.io/managed-by=echo-cluster -o jsonpath='{.items[0].metadata.name}') --grace-period=0 --force
+kubectl delete pod $(kubectl get pods -l app.kubernetes.io/managed-by=echo-service -o jsonpath='{.items[0].metadata.name}') --grace-period=0 --force
 
 ```
 
@@ -169,7 +169,7 @@ Watch Terminal 1. Within 2 seconds, the controller registers $\Delta = +1$ and r
 Mutate the desired replica count from `3` to `5` without restarting the controller:
 
 ```bash
-kubectl patch resilientdeployment echo-cluster --type='json' -p='[{"op": "replace", "path": "/spec/replicas", "value": 5}]'
+kubectl patch resilientdeployment echo-service --type='json' -p='[{"op": "replace", "path": "/spec/replicas", "value": 5}]'
 
 ```
 
